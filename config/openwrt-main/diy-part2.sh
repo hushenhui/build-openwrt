@@ -21,17 +21,14 @@ echo "DISTRIB_SOURCECODE='official'" >>package/base-files/files/etc/openwrt_rele
 
 # ------------------------------- Other started -------------------------------
 #
-# Add luci-app-amlogic
-# svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/luci-app-amlogic
-
-# coolsnowwolf default software package replaced with Lienol related software package
-# rm -rf feeds/packages/utils/{containerd,libnetwork,runc,tini}
-# svn co https://github.com/Lienol/openwrt-packages/trunk/utils/{containerd,libnetwork,runc,tini} feeds/packages/utils
 
 # Add third-party software packages (The entire repository)
 git clone https://github.com/Lieoxc/openwrt-package.git package/lieo-package
 
+# 默认IP等配置
 cp package/lieo-package/config_generate  ./package/base-files/files/bin/
+
+# 数据备份目录， 主要有OTA升级包目录，数据库目录
 cp package/lieo-package/sysupgrade.conf  ./package/base-files/files/etc/
 # 处理redis编译
 cp -rf package/lieo-package/redis-patch/files/* ./feeds/packages/libs/redis/files/
@@ -50,11 +47,21 @@ rm -rf package/lieo-package/iot/files/etc/iot/configs/dist.zip
 # wifi默认设置
 cp package/lieo-package/mac80211.sh ./package/kernel/mac80211/files/lib/wifi/
 
+# 业务进程的心跳检测机制
 cp package/lieo-package/plugin-monitor ./package/base-files/files/etc/init.d/
 cp package/lieo-package/plugin-monitor.sh ./package/base-files/files/bin/
 
+# 遥测数据和，命令日志 清理脚本
+cp package/lieo-package/clean_data.sh ./package/base-files/files/sbin/
+chmod +x ./package/base-files/files/sbin/clean_data.sh
+
+# 修改后的 sysupgrade 脚本，升级前先执行数据清理脚本
+cp package/lieo-package/sysupgrade ./package/base-files/files/sbin/
+
+# 二进制文件增加可执行权限
 chmod +x package/lieo-package/data_collect/bin/data_collect
 chmod +x package/lieo-package/iot/bin/iot
+
 # 前面已经拷贝完了，这里删除掉
 rm -rf package/lieo-package/mosquitto-patch 
 rm -rf package/lieo-package/postgresql-patch 
@@ -64,6 +71,8 @@ rm -rf package/lieo-package/sysupgrade.conf
 rm -rf package/lieo-package/mac80211.sh
 rm -rf package/lieo-package/plugin-monitor
 rm -rf package/lieo-package/plugin-monitor.sh
+rm -rf package/lieo-package/clean_data.sh
+rm -rf package/lieo-package/sysupgrade
 
 # Add third-party software packages (Specify the package)
 # svn co https://github.com/libremesh/lime-packages/trunk/packages/{shared-state-pirania,pirania-app,pirania} package/lime-packages/packages
