@@ -23,8 +23,7 @@ echo "DISTRIB_SOURCECODE='official'" >>package/base-files/files/etc/openwrt_rele
 #
 
 # Add third-party software packages (The entire repository)
-git clone https://github.com/Lieoxc/openwrt-package.git package/lieo-package
-
+git clone https://github.com/hushenhui/openwrt-package
 # 默认IP等配置
 cp package/lieo-package/config_generate  ./package/base-files/files/bin/
 
